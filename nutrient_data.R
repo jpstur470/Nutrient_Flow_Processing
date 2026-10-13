@@ -28,11 +28,13 @@ FIGS_SAVE <- TRUE  # set to TRUE to save figures to FIGS_DIR
 # Define which years will be processed, from the model output
 ANALYSIS_YEARS <- c(2015, 2021, seq(2025, 2100, 5))
 
+INPUT_DIR <- "input_data"
+
 # Read in external input data from N fertilizer database (Zhang et al. 2015) and crop mapping file
-#N_deposition <- read_csv("nutrient_input_data/N_deposition.csv")
-N_fixation <- read_csv("nutrient_input_data/N_fixation.csv")
-crop_mapping <- read_csv("nutrient_input_data/crop_mapping.csv")
-crop_nutrient_contents <- read_csv("nutrient_input_data/crop_nutrient_contents.csv")
+#N_deposition <- read_csv(file.path(INPUT_DIR, "N_deposition.csv"))
+N_fixation <- read_csv(file.path(INPUT_DIR, "N_fixation.csv"))
+crop_mapping <- read_csv(file.path(INPUT_DIR, "crop_mapping.csv"))
+crop_nutrient_contents <- read_csv(file.path(INPUT_DIR, "crop_nutrient_contents.csv"))
 
 # Read in external input data from N deposition database (Vishwakarma et al. 2022)
 # https://datadryad.org/dataset/doi:10.5061/dryad.msbcc2g1x
@@ -40,15 +42,15 @@ crop_nutrient_contents <- read_csv("nutrient_input_data/crop_nutrient_contents.c
 # Description: includes the nitrogen deposition (kg N/ha yr) data at country scale using Wang et al. N deposition maps and HYDE 3.3 cropland maps'
 # JS attributed the 236 countries to 'iso' and 'GCAM region' manually, and created 2 csv files: one with all the countries from the dataset- whether or not there was an assigned 'iso' and 'GCAM Region' (WL_countriesfull)
 # and one retaining the countries that had an 'iso' and 'GCAM region' assigned (WL)
-N_deposition_WL <- read_csv("nutrient_input_data/N_deposition_WL.csv")
+N_deposition_WL <- read_csv(file.path(INPUT_DIR, "N_deposition_WL.csv"))
 
 # gcamdata extdata files and cached (drake) data tables, copied locally in order to avoid potential disagreements wrt branches
-basin_to_country_mapping <- read_csv("nutrient_input_data/basin_to_country_mapping.csv")
-GCAM_region_names <- read_csv("nutrient_input_data/GCAM_region_names.csv")
-iso_GCAM_regID <- read_csv("nutrient_input_data/iso_GCAM_regID.csv")
-L100.LDS_ag_HA_ha <- read_csv("nutrient_input_data/L100.LDS_ag_HA_ha.csv")
-L100.LDS_ag_prod_t <- read_csv("nutrient_input_data/L100.LDS_ag_prod_t.csv")
-L101.ag_HA_bm2_R_C_Y_GLU <- read_csv("nutrient_input_data/L101.ag_HA_bm2_R_C_Y_GLU.csv")
+basin_to_country_mapping <- read_csv(file.path(INPUT_DIR, "basin_to_country_mapping.csv"))
+GCAM_region_names <- read_csv(file.path(INPUT_DIR, "GCAM_region_names.csv"))
+iso_GCAM_regID <- read_csv(file.path(INPUT_DIR, "iso_GCAM_regID.csv"))
+L100.LDS_ag_HA_ha <- read_csv(file.path(INPUT_DIR, "L100.LDS_ag_HA_ha.csv"))
+L100.LDS_ag_prod_t <- read_csv(file.path(INPUT_DIR, "L100.LDS_ag_prod_t.csv"))
+L101.ag_HA_bm2_R_C_Y_GLU <- read_csv(file.path(INPUT_DIR, "L101.ag_HA_bm2_R_C_Y_GLU.csv"))
 
 # Read in the model output data, currently read into a second query/output file. The block below assumes the
 # generic code in otaq_data.R has been run (not copying it here)
