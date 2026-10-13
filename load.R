@@ -28,6 +28,7 @@ if(INSTALL_PACKAGES){
   install.packages("egg")
   install.packages("scales")
   install.packages("ggrepel")
+  install.packages('hrbrthemes')
 
   install.packages("devtools")
 
@@ -51,10 +52,12 @@ library(ggtext)
 library(egg)
 library(scales)
 library(ggrepel)
+library(hrbrthemes)
 
 # paths ----
 DATA_DIR <- "data/"
 FIGS_DIR <- "figures/v1/" # change the subfolder here if desired
+INPUT_DIR <- "input_data"
 
 # create figs dir if it doesn't exist
 if (!dir.exists(FIGS_DIR)) {

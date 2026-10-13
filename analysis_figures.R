@@ -1,8 +1,7 @@
 
 
 ################################################# Figures ##
-install.packages('hrbrthemes')
-library(hrbrthemes)
+source("load.R")
 
 N_mean<-NUE_R_GLU_Y %>%
   group_by(region, year) %>%

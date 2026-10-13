@@ -5,7 +5,7 @@ library(tidyr)
 # load environment ----
 source("load.R"); paste0("Figures in ", FIGS_DIR)
 
-a<- getQuery(NPflows_proj, "ag production by tech")
+a <- getQuery(NPflows_proj, "ag production by tech")
 
 NPflows_proj <- loadProject("NPflows.proj")
 #
@@ -24,11 +24,8 @@ FIGS_SAVE <- TRUE  # set to TRUE to save figures to FIGS_DIR
 
 ###############################################################################%
 
-
 # Define which years will be processed, from the model output
 ANALYSIS_YEARS <- c(2015, 2021, seq(2025, 2100, 5))
-
-INPUT_DIR <- "input_data"
 
 # Read in external input data from N fertilizer database (Zhang et al. 2015) and crop mapping file
 #N_deposition <- read_csv(file.path(INPUT_DIR, "N_deposition.csv"))
@@ -271,12 +268,12 @@ P_harvested_Mt_R_GLU_Y <- getQuery(NPflows_proj, "ag production by tech") %>%
   summarise(harvested_P_Mt = sum(harvested_P_Mt), .groups = "drop")      
 
 # Combine all elements and calculate the surplus
-join_vars_P <- c("scenario", "region", "basin", "year")
 P_surplus_Mt_R_GLU_Y <- P_inputs_Mt_R_GLU_Y  %>%
   full_join(P_harvested_Mt_R_GLU_Y, by = join_vars) %>%
   mutate(P_surplus_Mt = input_Mt - harvested_P_Mt)
 
 # calculate Nitrogen Use Efficiency 
 PUE_R_GLU_Y <- P_surplus_Mt_R_GLU_Y %>%
-  group_by(region, basin, year) %>%
-  mutate(PUE = ((1-((P_surplus_Mt)/(input_N_Mt)))*100))
+  group_by(region, basin, year, scenario) %>%
+  mutate(PUE = ((1-((P_surplus_Mt)/(input_Mt)))*100))
+  
