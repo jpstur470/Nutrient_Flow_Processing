@@ -1,13 +1,14 @@
 
 
 ################################################# Figures ##
-source("load.R")
+source("nutrient_data.R")
 
-N_mean<-NUE_R_GLU_Y %>%
+# data ----
+N_mean <- NUE_R_GLU_Y %>%
   group_by(region, year) %>%
-  summarise(mean_N_surplus = mean(N_surplus_Mt, na.rm = TRUE), 
+  summarise(mean_N_surplus = mean(N_surplus_Mt, na.rm = TRUE),
             mean_NUE = mean(NUE, na.rm = TRUE))%>%
-  ungroup() 
+  ungroup()
 
 
 # Reshape to long format
@@ -58,11 +59,7 @@ BNF_R_Y<- ggplot(BNF_Mt_R_GLU_Y, aes(x = year, y = BNF_Mt, color = basin, group 
                region = function(x) stringr::str_wrap(x, width = 15)))
 
 
-### BNF Map 
-install.packages('ggspatial')
-library(rmap)
-library(ggspatial)
-library(sf)
+### BNF Map ----
 
 basin_spatial_data <- mapGCAMBasins%>%
   rename(subRegionMap = subRegion)
@@ -105,8 +102,8 @@ map_index_compare <- basin_spatial_data  %>%
 map_index_2021 <- map_index_2021 %>%
   mutate(
     BNF_quartile = cut(
-      BNF_Mt,
-      breaks = quantile(BNF_Mt, probs = seq(0, 1, 0.25), na.rm = TRUE),
+      BNF_Mt_2021,
+      breaks = quantile(BNF_Mt_2021, probs = seq(0, 1, 0.25), na.rm = TRUE),
       include.lowest = TRUE,
       labels = c("0–25%", "25–50%", "50–75%", "75–100%")
     )
@@ -116,16 +113,17 @@ map_index_2021 <- map_index_2021 %>%
 map_index_2050 <- map_index_2050 %>%
   mutate(
     BNF_quartile = cut(
-      BNF_Mt,
-      breaks = quantile(BNF_Mt, probs = seq(0, 1, 0.25), na.rm = TRUE),
+      BNF_Mt_2050,
+      breaks = quantile(BNF_Mt_2050, probs = seq(0, 1, 0.25), na.rm = TRUE),
       include.lowest = TRUE,
       labels = c("0–25%", "25–50%", "50–75%", "75–100%")
     )
   )
 
-#map_percentile_rank <- basin_spatial_data  %>%
-#  left_join(BNF_Mt_R_2021, by = c("subRegionMap"))%>%
-#  mutate(percentile = percent_rank(BNF_Mt)) #computes the percentile rank for each value
+map_percentile_rank <- basin_spatial_data  %>%
+ left_join(BNF_Mt_R_2021, by = c("subRegionMap"))%>%
+ mutate(percentile = percent_rank(BNF_Mt_2021)) #computes the percentile rank for each value
+
 
 
 ## raw values

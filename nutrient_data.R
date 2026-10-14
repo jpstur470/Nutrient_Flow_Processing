@@ -5,28 +5,16 @@ library(tidyr)
 # load environment ----
 source("load.R"); paste0("Figures in ", FIGS_DIR)
 
-a <- getQuery(NPflows_proj, "ag production by tech")
-
 NPflows_proj <- loadProject("NPflows.proj")
 #
 # listQueries(NPflows_proj)
 
 # analysis constants ----
-ANALYSIS_YEARS <- c(2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100)
-ANALYSIS_YEARS_FUTURE <- c(2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100)
-ANALYSIS_REGIONS <- c("Africa_Southern", "Brazil", "China", "India", "USA", "Indonesia")
-
-# plot vars ----
-# TODO: rename refined liquids to petroleum
-FIGS_SAVE <- TRUE  # set to TRUE to save figures to FIGS_DIR
-
-# plots ----
-
-###############################################################################%
-
-# Define which years will be processed, from the model output
 ANALYSIS_YEARS <- c(2015, 2021, seq(2025, 2100, 5))
 
+
+###############################################################################%
+# read data ----
 # Read in external input data from N fertilizer database (Zhang et al. 2015) and crop mapping file
 #N_deposition <- read_csv(file.path(INPUT_DIR, "N_deposition.csv"))
 N_fixation <- read_csv(file.path(INPUT_DIR, "N_fixation.csv"))
@@ -236,7 +224,7 @@ N_surplus_Mt_R_GLU_Y <- BNF_Mt_R_GLU_Y %>%
 # calculate Nitrogen Use Efficiency 
 NUE_R_GLU_Y <- N_surplus_Mt_R_GLU_Y %>%
   group_by(region, basin, year) %>%
-  mutate(NUE = ((1-((N_surplus_Mt)/(BNF_Mt+N_deposition_Mt+input_N_Mt)))*100))
+  mutate(NUE = ((1-((N_surplus_Mt)/(BNF_Mt + N_deposition_Mt + input_N_Mt))) * 100))
 
 # Phosphorus calculations ----
 
@@ -272,7 +260,7 @@ P_surplus_Mt_R_GLU_Y <- P_inputs_Mt_R_GLU_Y  %>%
   full_join(P_harvested_Mt_R_GLU_Y, by = join_vars) %>%
   mutate(P_surplus_Mt = input_Mt - harvested_P_Mt)
 
-# calculate Nitrogen Use Efficiency 
+# calculate Phosphorus Use Efficiency 
 PUE_R_GLU_Y <- P_surplus_Mt_R_GLU_Y %>%
   group_by(region, basin, year, scenario) %>%
   mutate(PUE = ((1-((P_surplus_Mt)/(input_Mt)))*100))

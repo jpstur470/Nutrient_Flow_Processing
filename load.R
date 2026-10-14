@@ -12,6 +12,7 @@
 # set bools
 INSTALL_PACKAGES <- FALSE # set to TRUE to install required packages
 QUERY_GCAM <- FALSE # set to TRUE to re-query GCAM output
+FIGS_SAVE <- TRUE  # set to TRUE to save figures to FIGS_DIR
 
 # install packages ----
 
@@ -29,6 +30,8 @@ if(INSTALL_PACKAGES){
   install.packages("scales")
   install.packages("ggrepel")
   install.packages('hrbrthemes')
+  install.packages('ggspatial')
+  install.packages('sf')
 
   install.packages("devtools")
 
@@ -53,10 +56,13 @@ library(egg)
 library(scales)
 library(ggrepel)
 library(hrbrthemes)
+library(rmap)
+library(ggspatial)
+library(sf)
 
 # paths ----
 DATA_DIR <- "data/"
-FIGS_DIR <- "figures/v1/" # change the subfolder here if desired
+FIGS_DIR <- "figures/v2/" # change the subfolder here if desired
 INPUT_DIR <- "input_data"
 
 # create figs dir if it doesn't exist
@@ -73,7 +79,7 @@ DAYS_PER_YEAR <- 365.25
 CONV_PCAL_MCAL <- 1e9
 CONV_NH3_N <- 14/17    # convert mass of NH3 to mass of N
 
-HIST_YEARS <- c(1975, 1990, 2005, 2010, 2015, 2020, 2025)
+HIST_YEARS <- c(1975, 1990, 2005, 2010, 2015, 2021, 2025)
 
 # query GCAM ----
 OUTPUTFILE <- "NPflows.proj"
@@ -95,5 +101,5 @@ if (QUERY_GCAM) {
 NPflows_proj <- loadProject(OUTPUTFILE)
 
 
-print(paste0("Queries: ", listQueries(NPflows_proj)))
-
+cat(paste("Queries:\n", paste(listQueries(NPflows_proj), collapse = ", ")))
+cat(paste("\nScenarios:\n", paste(listScenarios(NPflows_proj), collapse = ", ")))
