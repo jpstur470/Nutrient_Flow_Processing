@@ -3,6 +3,38 @@
 ################################################# Figures ##
 source("nutrient_data.R")
 
+# plotting themes ----
+nflowstheme <- theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    panel.border = element_blank(),
+    # panel.background = element_rect(fill = "white"),  # Background inside plotting area
+    panel.background = element_blank()
+  )
+
+# north arrow and scale
+map_annotations <-
+  list(
+    annotation_north_arrow(
+      location = "bl",
+      which_north = "true",
+      style = north_arrow_fancy_orienteering,
+      height = grid::unit(1.5, "cm"),
+      width = grid::unit(1.5, "cm"),
+      pad_x = grid::unit(0.5, "cm"),
+      pad_y = grid::unit(0.5, "cm")
+    ),
+    annotation_scale(
+      location = "bl",
+      width_hint = 0.2,
+      bar_cols = c("black", "white"),
+      text_cex = 0.8
+    )
+  )
+
 # data ----
 N_mean <- NUE_R_GLU_Y %>%
   group_by(region, year) %>%
@@ -46,11 +78,9 @@ ggplot(try_1_long, aes(x = year, y = value, fill = variable)) +
 
 
 
-
-
-BNF_R_Y<- ggplot(BNF_Mt_R_GLU_Y, aes(x = year, y = BNF_Mt, color = basin, group = basin)) +
-  geom_point(size = 1.5) +    
-  geom_line(size = 1) +        
+BNF_R_Y <- ggplot(BNF_Mt_R_GLU_Y, aes(x = year, y = BNF_Mt, color = basin, group = basin)) +
+  geom_point(size = 1.5) +
+  geom_line(size = 1) +
   labs(x = "",y = "Biological Nitrogen Fixation (Mt)",color = "Basin") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -79,7 +109,7 @@ BNF_Mt_R_2050<- BNF_Mt_R_GLU_Y %>%
   rename(BNF_Mt_2050=BNF_Mt)%>%
   left_join(basin_ID, by = "basin")
 
-BNF_Mt_R_compare<- BNF_Mt_R_2021 %>%
+BNF_Mt_R_compare <- BNF_Mt_R_2021 %>%
   left_join(BNF_Mt_R_2050, by = c("region","basin","subRegionMap"))%>%
   select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
   mutate(Percent_change= ((BNF_Mt_2050 - BNF_Mt_2021)/ (BNF_Mt_2021))*100,
@@ -135,37 +165,12 @@ map_rawvalues <- ggplot(data = map_index_compare) +
     name = "% Change",
     na.value = "grey"  # color for missing data
   ) +
-  labs(title = "Biological Nitrogen Fixation % Change 2021-2050")+
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
+  labs(title = "Biological Nitrogen Fixation % Change 2021-2050") +
+  nflowstheme + map_annotations
 
-map_rawvalues+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+map_rawvalues
 
-
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_change.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_change.png"), height = 8, width = 11, units = "in")}
 
 
 # raw values binned into quartiles
@@ -174,40 +179,14 @@ map_rawvalues_quartiles_2021 <- ggplot(data = map_index_2021) +
   scale_fill_brewer(
     palette = "Greens",   # or any ColorBrewer palette
     name = "Quartile",                  # legend ticks at quantiles
-    na.value = "grey"  
+    na.value = "grey"
   ) +
   # Add title
   labs(title = "Biological Nitrogen Fixation 2021") +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-map_rawvalues_quartiles_2021+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_quartile.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_quartile.png"), height = 8, width = 11, units = "in")}
 
 
 # raw values binned into quartiles
@@ -216,40 +195,14 @@ map_rawvalues_quartiles_2050 <- ggplot(data = map_index_2050) +
   scale_fill_brewer(
     palette = "Greens",   # or any ColorBrewer palette
     name = "Quartile",                  # legend ticks at quantiles
-    na.value = "grey"  
+    na.value = "grey"
   ) +
   # Add title
   labs(title = "Biological Nitrogen Fixation 2050") +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-map_rawvalues_quartiles_2050+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_quartile.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "BNF_quartile_2050.png"), height = 8, width = 11, units = "in")}
 
 
 # percent rank
@@ -262,15 +215,9 @@ map_percentrank <- ggplot(data = map_percentile_rank) +
     name = "BNF percentile rank",
     na.value = "white"  # color for missing data
   ) +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
+  nflowstheme + map_annotations
 
-############# N Dep Map
+############# N Dep Map ----
 
 N_deposition_Mt_R_GLU_Y
 
@@ -280,9 +227,10 @@ N_deposition_Mt_R_GLU_2021<- N_deposition_Mt_R_GLU_Y%>%
   rename(N_deposition_Mt_2021=N_deposition_Mt)%>%
   left_join(basin_ID, by = "basin")
 
-############# N input Map
 
-N_inputs_Mt_R_GLU_Y 
+############# N input Map ----
+
+N_inputs_Mt_R_GLU_Y
 
 N_inputs_Mt_R_GLU_2021<- N_inputs_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
@@ -300,7 +248,7 @@ N_inputs_Mt_R_GLU_compare<- N_inputs_Mt_R_GLU_2021%>%
   left_join(N_inputs_Mt_R_GLU_2050, by = c("region","basin","subRegionMap"))%>%
   select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
   mutate(
-    Percent_change = (input_N_Mt_2050 - input_N_Mt_2021) / 
+    Percent_change = (input_N_Mt_2050 - input_N_Mt_2021) /
       input_N_Mt_2021 * 100,
     Percent_change = replace(Percent_change, is.infinite(Percent_change), NA),
     Percent_change = pmin(Percent_change, 100, na.rm = TRUE) # cap at 100
@@ -332,40 +280,14 @@ Ninput_map_rawvalues_quartiles <- ggplot(data = Ninput_map_index) +
   scale_fill_brewer(
     palette = "Oranges",   # or any ColorBrewer palette
     name = "Quartile",                  # legend ticks at quantiles
-    na.value = "grey"  
+    na.value = "grey"
   )  +
   # Add title
   labs(title = "Nitrogen Input 2021") +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Ninput_map_rawvalues_quartiles+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Ninput_quartile.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Ninput_quartile.png"), height = 8, width = 11, units = "in")}
 
 
 
@@ -378,60 +300,35 @@ Ninput_map_rawvalues <- ggplot(data = Ninput_map_index_compare) +
     name = "% Change",
     na.value = "grey"  # color for missing data
   ) +
-  labs(title = "Nitrogen Input % Change 2021-2050")+
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Ninput_map_rawvalues+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  labs(title = "Nitrogen Input % Change 2021-2050") +
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Ninput_change.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Ninput_change.png"), height = 8, width = 11, units = "in")}
 
 ##########################################
 
+# N Harvested ----
 N_harvested_Mt_R_GLU_Y
 
 
-N_harvested_Mt_R_GLU_2021<-N_harvested_Mt_R_GLU_Y%>%
+N_harvested_Mt_R_GLU_2021 <- N_harvested_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2021)%>%
   rename(harvested_N_Mt_2021=harvested_N_Mt)%>%
   left_join(basin_ID, by = "basin")
 
-N_harvested_Mt_R_GLU_2050<-N_harvested_Mt_R_GLU_Y%>%
+N_harvested_Mt_R_GLU_2050 <- N_harvested_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2050)%>%
   rename(harvested_N_Mt_2050=harvested_N_Mt)%>%
   left_join(basin_ID, by = "basin")
 
-N_harvested_Mt_R_GLU_compare<- N_harvested_Mt_R_GLU_2021%>%
+N_harvested_Mt_R_GLU_compare <- N_harvested_Mt_R_GLU_2021%>%
   left_join(N_harvested_Mt_R_GLU_2050, by = c("region","basin","subRegionMap"))%>%
   select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
   mutate(
-    Percent_change = (harvested_N_Mt_2050 - harvested_N_Mt_2021) / 
+    Percent_change = (harvested_N_Mt_2050 - harvested_N_Mt_2021) /
       harvested_N_Mt_2021 * 100,
     Percent_change = replace(Percent_change, is.infinite(Percent_change), NA),
     Percent_change = pmin(Percent_change, 100, na.rm = TRUE) # cap at 100
@@ -463,40 +360,14 @@ Nharvest_map_rawvalues_quartiles <- ggplot(data = Nharvest_map_index) +
   scale_fill_brewer(
     palette = "Reds",   # or any ColorBrewer palette
     name = "Quartile",                  # legend ticks at quantiles
-    na.value = "grey"  
+    na.value = "grey"
   )  +
   # Add title
   labs(title = "Harvested Nitrogen 2021") +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Nharvest_map_rawvalues_quartiles+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nharvest_quartile.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nharvest_quartile.png"), height = 8, width = 11, units = "in")}
 
 
 
@@ -510,38 +381,13 @@ Nharvest_map_rawvalues <- ggplot(data = Nharvest_map_index_compare) +
     na.value = "grey"  # color for missing data
   ) +
   labs(title = "Harvested Nitrogen % Change 2021-2050")+
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Nharvest_map_rawvalues+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nharvest_change.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nharvest_change.png"), height = 8, width = 11, units = "in")}
 
 ########################################
+# N Surplus ----
 
 N_surplus_Mt_R_GLU_Y
 
@@ -559,14 +405,14 @@ N_surplus_Mt_R_GLU_2050<-N_surplus_Mt_R_GLU_Y%>%
   left_join(basin_ID, by = "basin")
 
 N_surplus_Mt_R_GLU_compare<- N_surplus_Mt_R_GLU_2021%>%
-  left_join(N_surplus_Mt_R_GLU_2050, by = c("region","basin"))%>%
-  select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
+  left_join(N_surplus_Mt_R_GLU_2050, by = c("region","basin")) %>%
+  select(-scenario.x, -year.x, -scenario.y, -year.y) %>%
   mutate(
-    Percent_change = (N_surplus_Mt_2050 - N_surplus_Mt_2021) / 
+    Percent_change = (N_surplus_Mt_2050 - N_surplus_Mt_2021) /
       N_surplus_Mt_2021 * 100,
     Percent_change = replace(Percent_change, is.infinite(Percent_change), NA),
     Percent_change = pmax(pmin(Percent_change, 100, na.rm = TRUE), -100, na.rm = TRUE)
-  )%>%
+  ) %>%
   rename(subRegionMap=subRegionMap.x)
 
 
@@ -595,40 +441,14 @@ Nsurplus_map_rawvalues_quartiles <- ggplot(data = Nsurplus_map_index) +
   scale_fill_brewer(
     palette = "Blues",   # or any ColorBrewer palette
     name = "Quartile",                  # legend ticks at quantiles
-    na.value = "grey"  
+    na.value = "grey"
   )  +
   # Add title
   labs(title = "Nitrogen Surplus 2021") +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Nsurplus_map_rawvalues_quartiles+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nsurplus_quartile.png"), height = 8, width = 11, units = "in")}
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nsurplus_quartile.png"), height = 8, width = 11, units = "in")}
 
 
 
@@ -641,34 +461,9 @@ Nsurplus_map_rawvalues <- ggplot(data = Nsurplus_map_index_compare) +
     name = "% Change",
     na.value = "grey"  # color for missing data
   ) +
-  labs(title = "Nitrogen Surplus % Change 2021-2050")+
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank()
-  )
-
-Nsurplus_map_rawvalues+ theme(
-  panel.background = element_rect(fill = "lightblue"),  # Background inside plotting area
-  panel.grid = element_blank()  # Remove grid lines for cleaner look
-)+
-  annotation_north_arrow(
-    location = "bl",              # top-right corner
-    which_north = "true",         # true north
-    style = north_arrow_fancy_orienteering,
-    height = grid::unit(1.5, "cm"),
-    width = grid::unit(1.5, "cm"),
-    pad_x = grid::unit(0.5, "cm"),
-    pad_y = grid::unit(0.5, "cm")
-  ) +
-  annotation_scale(
-    location = "bl",              # bottom-left corner
-    width_hint = 0.2,              # relative width of scale bar
-    bar_cols = c("black", "white"),
-    text_cex = 0.8
-  )
+  labs(title = "Nitrogen Surplus % Change 2021-2050") +
+  nflowstheme + map_annotations
 
 
-# if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nsurplus_change.png"), height = 8, width = 11, units = "in")}
+
+if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nsurplus_change.png"), height = 8, width = 11, units = "in")}
