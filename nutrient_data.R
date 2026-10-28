@@ -5,9 +5,9 @@ library(tidyr)
 # load environment ----
 source("load.R"); paste0("Figures in ", FIGS_DIR)
 
-NPflows_proj <- loadProject("NPflows.proj")
+NPKflows_proj <- loadProject("NPKflows.proj")
 #
-# listQueries(NPflows_proj)
+# listQueries(NPKflows_proj)
 
 # analysis constants ----
 ANALYSIS_YEARS <- c(2015, 2021, seq(2025, 2100, 5))
@@ -94,8 +94,8 @@ BNF_R_C_GLU_kgNm2 <- BNFhist_R_C_GLU_MtN %>%
   mutate(Nfix_kgNm2 = Nfix_Mt / HA_bm2) %>%
   select(region, GCAM_subsector, basin, Nfix_kgNm2)
 
-# Multiply BNF rates by land cover to get BNF by region/basin/year
-BNF_Mt_R_GLU_Y <- getQuery(NPflows_proj, "land_cover") %>%
+# Multiply BNF rates by land cover to get BNF by region/basin/crop/year
+BNF_Mt_R_C_GLU_Y <- getQuery(NPKflows_proj, "land_cover") %>%
   filter(grepl("IRR|RFD", land_allocation),
          year %in% ANALYSIS_YEARS) %>%
   separate(land_allocation, into = c("GCAM_subsector", "basin", "IRR_RFD", "mgmt")) %>%
@@ -104,8 +104,7 @@ BNF_Mt_R_GLU_Y <- getQuery(NPflows_proj, "land_cover") %>%
   left_join(BNF_R_C_GLU_kgNm2, by = c("region", "GCAM_subsector", "basin")) %>%
   replace_na(list(Nfix_kgNm2 = 0)) %>%
   mutate(BNF_Mt = Nfix_kgNm2 * land_bm2) %>%
-  group_by(scenario, region, basin, year) %>%
-  summarise(BNF_Mt = sum(BNF_Mt), .groups = "drop")
+  select(scenario, region, GCAM_subsector, basin, year, BNF_Mt)
 
 # N deposition: aggregate from country to GCAM region, using harvested areas as weights
 HA_ha_ctry <- L100.LDS_ag_HA_ha %>%
@@ -134,27 +133,29 @@ Ndep_R_kgNm2 <- N_deposition_WL %>%
 # Nitrogen deposition for purposes of nutrient balances is only considered on agricultural land, not on natural ecosystems
 # https://www.oecd.org/en/publications/trends-and-drivers-of-agri-environmental-performance-in-oecd-countries_b59b1142-en/full-report/nutrient-balances-in-agriculture_ab6ac5dc.html
 # Data are filtered to only cropland with the IRR|RFD filter.
-N_deposition_Mt_R_GLU_Y <- getQuery(NPflows_proj, "land_cover") %>%
+N_deposition_Mt_R_C_GLU_Y <- getQuery(NPKflows_proj, "land_cover") %>%
   filter(grepl("IRR|RFD", land_allocation),
          year %in% ANALYSIS_YEARS) %>%
   separate(land_allocation, into = c("GCAM_subsector", "basin", "IRR_RFD", "mgmt")) %>%
-  group_by(scenario, region, basin, year) %>%
+  group_by(scenario, region, GCAM_subsector, basin, year) %>%
   summarise(land_bm2 = sum(value), .groups = "drop") %>%
   left_join(Ndep_R_kgNm2, by = c("region")) %>%
   mutate(N_deposition_Mt = land_bm2 * Ndep_kgNm2) %>%
-  select(scenario, region, basin, year, N_deposition_Mt)
+  select(scenario, region, GCAM_subsector, basin, year, N_deposition_Mt)
 
 # inputs: compile "N fertilizer" and "P fertilizer" inputs from model run
-NP_inputs_Mt_R_GLU_Y <- getQuery(NPflows_proj, "nutrient inputs by ag tech") %>%
+NPK_inputs_Mt_R_GLU_Y <- getQuery(NPKflows_proj, "nutrient inputs by ag tech") %>%
   filter(year %in% ANALYSIS_YEARS) %>%
   separate(subsector, into = c("GCAM_subsector", "basin")) %>%
-  group_by(scenario, region, basin, year, input) %>%
+  group_by(scenario, region, basin, year, GCAM_subsector, input) %>%
   summarise(input_Mt = sum(value), .groups = "drop")
 
-N_inputs_Mt_R_GLU_Y <- filter(NP_inputs_Mt_R_GLU_Y, input == "N fertilizer") %>%
-  select(scenario, region, basin, year, input_N_Mt = input_Mt)
-P_inputs_Mt_R_GLU_Y <- filter(NP_inputs_Mt_R_GLU_Y, input == "P fertilizer") %>%
-  select(-input)
+N_inputs_Mt_R_C_GLU_Y <- filter(NPK_inputs_Mt_R_GLU_Y, input == "N fertilizer") %>%
+  select(scenario, region, basin, year, GCAM_subsector, N_input_Mt = input_Mt)
+P_inputs_Mt_R_C_GLU_Y <- filter(NPK_inputs_Mt_R_GLU_Y, input == "P fertilizer") %>%
+  select(scenario, region, basin, year, GCAM_subsector, P_input_Mt = input_Mt)
+K_inputs_Mt_R_C_GLU_Y <- filter(NPK_inputs_Mt_R_GLU_Y, input == "P fertilizer") %>%
+  select(scenario, region, basin, year, GCAM_subsector, K_input_Mt = input_Mt)
 
 # Harvested nutrients: the % of N and P in mass of crops harvested by GCAM region, crop, basin
 crop_nutrient_contents_lower <- crop_nutrient_contents %>%
@@ -186,6 +187,16 @@ P_contents_R_C_GLU <- nutrient_contents_ctry %>%
   mutate(contentP = totalP / prod_t) %>%
   select(-prod_t, -totalP)
 
+# K contents are just using P contents until data become available
+K_contents_R_C_GLU <- nutrient_contents_ctry %>%
+  drop_na(contentP) %>%
+  mutate(totalK = value * contentP) %>%
+  group_by(region, GCAM_commodity, GCAM_subsector, basin) %>%
+  summarise(prod_t = sum(value),
+            totalK = sum(totalK), .groups = "drop") %>%
+  mutate(contentK = totalK / prod_t) %>%
+  select(-prod_t, -totalK)
+
 # Crops are generally computed from a simple unweighted global median
 # Fodder crops are not in the nutrient data. Fodder are assumed 1.25% though the values differ throughout the year,
 # and the conventions on wet/dry in the FAO data are not clear https://fieldreport.caes.uga.edu/publications/B1350/alfalfa-management-in-georgia/
@@ -200,7 +211,7 @@ default_N_contents <- N_contents_R_C_GLU %>%
   add_row(GCAM_commodity = "biomass", default_contentN = 0.006)
 
 # biomass production is in EJ, so convert to biomass Mt for consistency with N content data
-N_harvested_Mt_R_GLU_Y <- getQuery(NPflows_proj, "ag production by tech") %>%
+N_harvested_Mt_R_C_GLU_Y <- getQuery(NPKflows_proj, "ag production by tech") %>%
   filter(!sector %in% c("Forest", "Pasture"),
          output == sector,
          year %in% ANALYSIS_YEARS) %>%
@@ -209,22 +220,28 @@ N_harvested_Mt_R_GLU_Y <- getQuery(NPflows_proj, "ag production by tech") %>%
   left_join(N_contents_R_C_GLU, by = c("region", sector = "GCAM_commodity", "GCAM_subsector", "basin")) %>%
   left_join(default_N_contents, by = c(sector = "GCAM_commodity")) %>%
   mutate(contentN = if_else(is.na(contentN), default_contentN, contentN),
-         harvested_N_Mt = value * contentN) %>%
+         N_harvested_Mt = value * contentN) %>%
+  group_by(scenario, region, GCAM_subsector, basin, year) %>%
+  summarise(N_harvested_Mt = sum(N_harvested_Mt), .groups = "drop")
+
+# Combine all elements and calculate the surplus and nitrogen use efficiency (NUE)
+join_vars <- c("scenario", "region", "GCAM_subsector", "basin", "year")
+N_balance_Mt_R_C_GLU_Y <- BNF_Mt_R_C_GLU_Y %>%
+  full_join(N_deposition_Mt_R_C_GLU_Y, by = join_vars) %>%
+  full_join(N_inputs_Mt_R_C_GLU_Y, by = join_vars) %>%
+  full_join(N_harvested_Mt_R_C_GLU_Y, by = join_vars) %>%
+  replace_na(list(N_input_Mt = 0, N_harvested_Mt = 0)) %>%
+  rename(commodity_type = GCAM_subsector) %>%
+  mutate(N_surplus_Mt = BNF_Mt + N_deposition_Mt + N_input_Mt - N_harvested_Mt,
+         NUE = N_harvested_Mt / (BNF_Mt + N_deposition_Mt + N_input_Mt),
+         across(where(is.numeric), round, digits = ROUNDING_DIGITS))
+
+# Calculate by basin (not crop)
+N_balance_Mt_R_GLU_Y <- N_balance_Mt_R_C_GLU_Y %>%
   group_by(scenario, region, basin, year) %>%
-  summarise(harvested_N_Mt = sum(harvested_N_Mt), .groups = "drop")
-
-# Combine all elements and calculate the surplus
-join_vars <- c("scenario", "region", "basin", "year")
-N_surplus_Mt_R_GLU_Y <- BNF_Mt_R_GLU_Y %>%
-  full_join(N_deposition_Mt_R_GLU_Y, by = join_vars) %>%
-  full_join(N_inputs_Mt_R_GLU_Y, by = join_vars) %>%
-  full_join(N_harvested_Mt_R_GLU_Y, by = join_vars) %>%
-  mutate(N_surplus_Mt = BNF_Mt + N_deposition_Mt + input_N_Mt - harvested_N_Mt)
-
-# calculate Nitrogen Use Efficiency 
-NUE_R_GLU_Y <- N_surplus_Mt_R_GLU_Y %>%
-  group_by(region, basin, year) %>%
-  mutate(NUE = ((1-((N_surplus_Mt)/(BNF_Mt + N_deposition_Mt + input_N_Mt))) * 100))
+  summarise_at(vars(BNF_Mt:N_surplus_Mt), sum) %>%
+  ungroup() %>%
+  mutate(NUE = round(N_harvested_Mt / (BNF_Mt + N_deposition_Mt + N_input_Mt), digits = ROUNDING_DIGITS))
 
 # Phosphorus calculations ----
 
@@ -242,7 +259,7 @@ default_P_contents <- P_contents_R_C_GLU %>%
   add_row(GCAM_commodity = "biomass", default_contentP = 0.006)
 
 # biomass production is in EJ, so convert to biomass Mt for consistency with P content data
-P_harvested_Mt_R_GLU_Y <- getQuery(NPflows_proj, "ag production by tech") %>%
+P_harvested_Mt_R_C_GLU_Y <- getQuery(NPKflows_proj, "ag production by tech") %>%
   filter(!sector %in% c("Forest", "Pasture"),
          output == sector,
          year %in% ANALYSIS_YEARS) %>%
@@ -251,17 +268,67 @@ P_harvested_Mt_R_GLU_Y <- getQuery(NPflows_proj, "ag production by tech") %>%
   left_join(P_contents_R_C_GLU, by = c("region", sector = "GCAM_commodity", "GCAM_subsector", "basin")) %>%
   left_join(default_P_contents, by = c(sector = "GCAM_commodity")) %>%
   mutate(contentP = if_else(is.na(contentP), default_contentP, contentP),
-         harvested_P_Mt = value * contentP) %>%
+         P_harvested_Mt = value * contentP) %>%
+  group_by(scenario, region, GCAM_subsector, basin, year) %>%
+  summarise(P_harvested_Mt = sum(P_harvested_Mt), .groups = "drop")      
+
+# P surplus is simply the applied P (from geologic P and manure P) minus the P in harvested crop biomass
+P_balance_Mt_R_C_GLU_Y <- P_inputs_Mt_R_C_GLU_Y  %>%
+  full_join(P_harvested_Mt_R_C_GLU_Y, by = join_vars) %>%
+  replace_na(list(P_input_Mt = 0, P_harvested_Mt = 0)) %>%
+  mutate(P_surplus_Mt = P_input_Mt - P_harvested_Mt,
+         PUE = P_harvested_Mt / P_input_Mt,
+         across(where(is.numeric), round, digits = ROUNDING_DIGITS))
+
+P_balance_Mt_R_GLU_Y <- P_balance_Mt_R_C_GLU_Y %>%
   group_by(scenario, region, basin, year) %>%
-  summarise(harvested_P_Mt = sum(harvested_P_Mt), .groups = "drop")      
+  summarise_at(vars(P_input_Mt:P_surplus_Mt), sum) %>%
+  ungroup() %>%
+  mutate(PUE = round(P_harvested_Mt / P_input_Mt, digits = ROUNDING_DIGITS))
 
-# Combine all elements and calculate the surplus
-P_surplus_Mt_R_GLU_Y <- P_inputs_Mt_R_GLU_Y  %>%
-  full_join(P_harvested_Mt_R_GLU_Y, by = join_vars) %>%
-  mutate(P_surplus_Mt = input_Mt - harvested_P_Mt)
 
-# calculate Phosphorus Use Efficiency 
-PUE_R_GLU_Y <- P_surplus_Mt_R_GLU_Y %>%
-  group_by(region, basin, year, scenario) %>%
-  mutate(PUE = ((1-((P_surplus_Mt)/(input_Mt)))*100))
-  
+# Potassium (K) calculations ----
+default_K_contents <- K_contents_R_C_GLU %>%
+  group_by(GCAM_commodity) %>%
+  summarise(default_contentK = median(contentK)) %>%
+  filter(!GCAM_commodity %in% c("FodderGrass", "FodderHerb")) %>%
+  add_row(GCAM_commodity = "FodderGrass", default_contentK = 0.025) %>%
+  add_row(GCAM_commodity = "FodderHerb", default_contentK = 0.025) %>%
+  add_row(GCAM_commodity = "biomass", default_contentK = 0.012)
+
+K_harvested_Mt_R_C_GLU_Y <- getQuery(NPKflows_proj, "ag production by tech") %>%
+  filter(!sector %in% c("Forest", "Pasture"),
+         output == sector,
+         year %in% ANALYSIS_YEARS) %>%
+  mutate(value = if_else(sector == "biomass", value / 0.0175, value)) %>%
+  separate(subsector, into = c("GCAM_subsector", "basin"), sep = "_") %>%
+  left_join(K_contents_R_C_GLU, by = c("region", sector = "GCAM_commodity", "GCAM_subsector", "basin")) %>%
+  left_join(default_K_contents, by = c(sector = "GCAM_commodity")) %>%
+  mutate(contentK = if_else(is.na(contentK), default_contentK, contentK),
+         K_harvested_Mt = value * contentK) %>%
+  group_by(scenario, region, GCAM_subsector, basin, year) %>%
+  summarise(K_harvested_Mt = sum(K_harvested_Mt), .groups = "drop")      
+
+# K surplus is simply the applied K (from geologic K and manure K) minus the K in harvested crop biomass
+K_balance_Mt_R_C_GLU_Y <- K_inputs_Mt_R_C_GLU_Y  %>%
+  full_join(K_harvested_Mt_R_C_GLU_Y, by = join_vars) %>%
+  replace_na(list(K_input_Mt = 0, K_harvested_Mt = 0)) %>%
+  mutate(K_surplus_Mt = K_input_Mt - K_harvested_Mt,
+         KUE = K_harvested_Mt / K_input_Mt,
+         across(where(is.numeric), round, digits = ROUNDING_DIGITS))
+
+K_balance_Mt_R_GLU_Y <- K_balance_Mt_R_C_GLU_Y %>%
+  group_by(scenario, region, basin, year) %>%
+  summarise_at(vars(K_input_Mt:K_surplus_Mt), sum) %>%
+  ungroup() %>%
+  mutate(KUE = round(K_harvested_Mt / K_input_Mt, digits = ROUNDING_DIGITS))
+
+# Write out (save) the output data to the specified directory
+write_csv(N_balance_Mt_R_C_GLU_Y, paste0(OUTPUT_DATA_DIR, "N_balance_Mt_R_C_GLU_Y.csv"))
+write_csv(N_balance_Mt_R_GLU_Y, paste0(OUTPUT_DATA_DIR, "N_balance_Mt_R_GLU_Y.csv"))
+
+write_csv(P_balance_Mt_R_C_GLU_Y, paste0(OUTPUT_DATA_DIR, "P_balance_Mt_R_C_GLU_Y.csv"))
+write_csv(P_balance_Mt_R_GLU_Y, paste0(OUTPUT_DATA_DIR, "P_balance_Mt_R_GLU_Y.csv"))
+
+write_csv(K_balance_Mt_R_C_GLU_Y, paste0(OUTPUT_DATA_DIR, "K_balance_Mt_R_C_GLU_Y.csv"))
+write_csv(K_balance_Mt_R_GLU_Y, paste0(OUTPUT_DATA_DIR, "K_balance_Mt_R_GLU_Y.csv"))

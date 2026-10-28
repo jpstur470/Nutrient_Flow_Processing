@@ -36,7 +36,7 @@ map_annotations <-
   )
 
 # data ----
-N_mean <- NUE_R_GLU_Y %>%
+N_mean <- N_balance_Mt_R_GLU_Y %>%
   group_by(region, year) %>%
   summarise(mean_N_surplus = mean(N_surplus_Mt, na.rm = TRUE),
             mean_NUE = mean(NUE, na.rm = TRUE))%>%
@@ -77,6 +77,8 @@ ggplot(try_1_long, aes(x = year, y = value, fill = variable)) +
   facet_wrap(~ region, nrow = 2, labeller = labeller(region = label_value))
 
 
+BNF_Mt_R_GLU_Y <- N_balance_Mt_R_GLU_Y %>%
+  select(scenario, region, basin, year, BNF_Mt)
 
 BNF_R_Y <- ggplot(BNF_Mt_R_GLU_Y, aes(x = year, y = BNF_Mt, color = basin, group = basin)) +
   geom_point(size = 1.5) +
@@ -219,7 +221,8 @@ map_percentrank <- ggplot(data = map_percentile_rank) +
 
 ############# N Dep Map ----
 
-N_deposition_Mt_R_GLU_Y
+N_deposition_Mt_R_GLU_Y <- N_balance_Mt_R_GLU_Y %>%
+  select(scenario, region, basin, year, N_deposition_Mt)
 
 N_deposition_Mt_R_GLU_2021<- N_deposition_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
@@ -230,26 +233,27 @@ N_deposition_Mt_R_GLU_2021<- N_deposition_Mt_R_GLU_Y%>%
 
 ############# N input Map ----
 
-N_inputs_Mt_R_GLU_Y
+N_inputs_Mt_R_GLU_Y <- N_balance_Mt_R_GLU_Y %>%
+  select(scenario, region, basin, year, N_input_Mt)
 
 N_inputs_Mt_R_GLU_2021<- N_inputs_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2021)%>%
-  rename(input_N_Mt_2021=input_N_Mt)%>%
+  rename(N_input_Mt_2021=N_input_Mt)%>%
   left_join(basin_ID, by = "basin")
 
 N_inputs_Mt_R_GLU_2050<- N_inputs_Mt_R_GLU_Y %>%
   group_by(region, basin, year) %>%
   filter(year==2050)%>%
-  rename(input_N_Mt_2050=input_N_Mt)%>%
+  rename(N_input_Mt_2050=N_input_Mt)%>%
   left_join(basin_ID, by = "basin")
 
 N_inputs_Mt_R_GLU_compare<- N_inputs_Mt_R_GLU_2021%>%
   left_join(N_inputs_Mt_R_GLU_2050, by = c("region","basin","subRegionMap"))%>%
   select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
   mutate(
-    Percent_change = (input_N_Mt_2050 - input_N_Mt_2021) /
-      input_N_Mt_2021 * 100,
+    Percent_change = (N_input_Mt_2050 - N_input_Mt_2021) /
+      N_input_Mt_2021 * 100,
     Percent_change = replace(Percent_change, is.infinite(Percent_change), NA),
     Percent_change = pmin(Percent_change, 100, na.rm = TRUE) # cap at 100
   )
@@ -266,8 +270,8 @@ Ninput_map_index_compare <- basin_spatial_data  %>%
 Ninput_map_index <- Ninput_map_index %>%
   mutate(
     N_input_quartile = cut(
-      input_N_Mt_2021,
-      breaks = quantile(input_N_Mt_2021, probs = seq(0, 1, 0.25), na.rm = TRUE),
+      N_input_Mt_2021,
+      breaks = quantile(N_input_Mt_2021, probs = seq(0, 1, 0.25), na.rm = TRUE),
       include.lowest = TRUE,
       labels = c("0–25%", "25–50%", "50–75%", "75–100%")
     )
@@ -309,27 +313,27 @@ if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Ninput_change.png"), height = 8, width 
 ##########################################
 
 # N Harvested ----
-N_harvested_Mt_R_GLU_Y
-
+N_harvested_Mt_R_GLU_Y <- N_balance_Mt_R_GLU_Y %>%
+  select(scenario, region, basin, year, N_harvested_Mt)
 
 N_harvested_Mt_R_GLU_2021 <- N_harvested_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2021)%>%
-  rename(harvested_N_Mt_2021=harvested_N_Mt)%>%
+  rename(N_harvested_Mt_2021=N_harvested_Mt)%>%
   left_join(basin_ID, by = "basin")
 
 N_harvested_Mt_R_GLU_2050 <- N_harvested_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2050)%>%
-  rename(harvested_N_Mt_2050=harvested_N_Mt)%>%
+  rename(N_harvested_Mt_2050=N_harvested_Mt)%>%
   left_join(basin_ID, by = "basin")
 
 N_harvested_Mt_R_GLU_compare <- N_harvested_Mt_R_GLU_2021%>%
   left_join(N_harvested_Mt_R_GLU_2050, by = c("region","basin","subRegionMap"))%>%
   select(-scenario.x, -year.x, -scenario.y, -year.y)%>%
   mutate(
-    Percent_change = (harvested_N_Mt_2050 - harvested_N_Mt_2021) /
-      harvested_N_Mt_2021 * 100,
+    Percent_change = (N_harvested_Mt_2050 - N_harvested_Mt_2021) /
+      N_harvested_Mt_2021 * 100,
     Percent_change = replace(Percent_change, is.infinite(Percent_change), NA),
     Percent_change = pmin(Percent_change, 100, na.rm = TRUE) # cap at 100
   )
@@ -346,8 +350,8 @@ Nharvest_map_index_compare <- basin_spatial_data  %>%
 Nharvest_map_index <- Nharvest_map_index %>%
   mutate(
     N_harvest_quartile = cut(
-      harvested_N_Mt_2021,
-      breaks = quantile(harvested_N_Mt_2021, probs = seq(0, 1, 0.25), na.rm = TRUE),
+      N_harvested_Mt_2021,
+      breaks = quantile(N_harvested_Mt_2021, probs = seq(0, 1, 0.25), na.rm = TRUE),
       include.lowest = TRUE,
       labels = c("0–25%", "25–50%", "50–75%", "75–100%")
     )
@@ -389,16 +393,15 @@ if (FIGS_SAVE) {ggsave(paste0(FIGS_DIR, "Nharvest_change.png"), height = 8, widt
 ########################################
 # N Surplus ----
 
-N_surplus_Mt_R_GLU_Y
+N_balance_Mt_R_GLU_Y
 
-
-N_surplus_Mt_R_GLU_2021<-N_surplus_Mt_R_GLU_Y%>%
+N_surplus_Mt_R_GLU_2021<-N_balance_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2021)%>%
   rename(N_surplus_Mt_2021=N_surplus_Mt)%>%
   left_join(basin_ID, by = "basin")
 
-N_surplus_Mt_R_GLU_2050<-N_surplus_Mt_R_GLU_Y%>%
+N_surplus_Mt_R_GLU_2050<-N_balance_Mt_R_GLU_Y%>%
   group_by(region, basin, year) %>%
   filter(year==2050)%>%
   rename(N_surplus_Mt_2050=N_surplus_Mt)%>%

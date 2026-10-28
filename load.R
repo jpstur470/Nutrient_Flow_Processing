@@ -61,8 +61,8 @@ library(ggspatial)
 library(sf)
 
 # paths ----
-DATA_DIR <- "data/"
-FIGS_DIR <- "figures/v2/" # change the subfolder here if desired
+OUTPUT_DATA_DIR <- "output_data/"
+FIGS_DIR <- "figures/v1/" # change the subfolder here if desired
 INPUT_DIR <- "input_data"
 
 # create figs dir if it doesn't exist
@@ -71,6 +71,12 @@ if (!dir.exists(FIGS_DIR)) {
   paste0("Created directory: ", FIGS_DIR)
   }
 
+# create output data dir if it doesn't exist
+if (!dir.exists(OUTPUT_DATA_DIR)) {
+  dir.create(OUTPUT_DATA_DIR)
+  paste0("Created directory: ", OUTPUT_DATA_DIR)
+}
+
 # constants ----
 CONV_USD_1975_2020 <- 3.8
 CONV_KG_T <- 1000
@@ -78,28 +84,29 @@ H2_GJ_kg <- 0.1202
 DAYS_PER_YEAR <- 365.25
 CONV_PCAL_MCAL <- 1e9
 CONV_NH3_N <- 14/17    # convert mass of NH3 to mass of N
+ROUNDING_DIGITS <- 7    # number of decimals for data being written out. R's default is absurd (17 digits) but some values are quite small
 
 HIST_YEARS <- c(1975, 1990, 2005, 2010, 2015, 2021, 2025)
 
 # query GCAM ----
-OUTPUTFILE <- "NPflows.proj"
+OUTPUTFILE <- "NPKflows.proj"
 
 if (QUERY_GCAM) {
   # query variables
   PATH_TO_GCAM <- "output"
 
-  SCENARIOS <- c("Reference")
+  SCENARIOS <- c("NPK_manure")
 
   QUERYFILE <- "BatchQueries_OTAQ_nutrients.xml"
 
   # query
   conn <- localDBConn(PATH_TO_GCAM, "database_basexdb")
-  NPflows_proj <- addScenario(conn, OUTPUTFILE, SCENARIOS, QUERYFILE, clobber = TRUE)
+  NPKflows_proj <- addScenario(conn, OUTPUTFILE, SCENARIOS, QUERYFILE, clobber = TRUE)
 }
 
 # load project ----
-NPflows_proj <- loadProject(OUTPUTFILE)
+NPKflows_proj <- loadProject(OUTPUTFILE)
 
 
-cat(paste("Queries:\n", paste(listQueries(NPflows_proj), collapse = ", ")))
-cat(paste("\nScenarios:\n", paste(listScenarios(NPflows_proj), collapse = ", ")))
+cat(paste("Queries:\n", paste(listQueries(NPKflows_proj), collapse = ", ")))
+cat(paste("\nScenarios:\n", paste(listScenarios(NPKflows_proj), collapse = ", ")))
