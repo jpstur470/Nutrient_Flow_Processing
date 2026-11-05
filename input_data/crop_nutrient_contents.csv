@@ -1,149 +1,156 @@
-﻿Item,contentN,contentP
-"Almonds, with shell",0.039,0.011
-"Anise, badian, fennel, corian.",0.0088,0.0013
-Apples,0.0022,0.0007
-Apricots,0.0037,0.0007
-Arecanuts,0.0078,NA
-Artichokes,0.0032,NA
-Asparagus,0.0048,0.0009
-Avocados,0.0027,0.0009
-Bambara beans,0.026,0.0051
-Bananas,0.0014,0.0004
-Barley,0.018,0.0032
-"Beans, dry",0.042,0.0057
-"Beans, green",0.0041,0.0007
-Berries Nes,0.0016,NA
-Blueberries,0.0011,0
-"Brazil nuts, with shells",0.011,NA
-"Broad beans, horse beans, dry",0.03,0.0051
-Buckwheat,0.017,0.0022
-Cabbages and other brassicas,0.0038,0.0004
-Canary seed,0.02,0.0029
-Carobs,0.0026,NA
-Carrots and turnips,0.0021,0.0005
-"Cashew nuts, with shell",0.012,NA
-Cashewapple,0.0013,NA
-Cassava,0.0027,0.0033
-Castor oil seed,0.014,NA
-Cauliflowers and broccoli,0.004,0.0009
-"Cereals, nes",0.015,0.0029
-Cherries,0.0018,NA
-Chestnut,0.0029,NA
-Chick peas,0.028,0.0051
-Chicory roots,0.0018,NA
-"Chillies and peppers, dry",0.012,0.0012
-"Chillies and peppers, green",0.0022,0.0005
-Cinnamon (cannella),0.012,0.0013
-Cloves,0.019,0.004
-"Cocoa, beans",0.023,0.006
-Coconuts,0.019,0.0038
-"Coffee, green",0.023,0.0035
-"Cow peas, dry",0.03,0.0051
-Cranberries,0.0006,NA
-Cucumbers and gherkins,0.0015,0.0005
-Currants,0.0022,NA
-Dates,0.0024,NA
-Eggplants (aubergines),0.0028,0.0008
-Fibre Crops Nes,0.0043,0.0011
-Figs,0.003,NA
-Flax fibre and tow,0.014,0.0035
-Fonio,0.013,0.0022
-Fruit Fresh Nes,0.0019,0.0004
-"Fruit, tropical fresh nes",0.0028,0.0007
-Garlic,0.0064,0.0009
-Ginger,0.016,0.0013
-Gooseberries,0.0014,NA
-Grapefruit (inc. pomelos),0.0018,NA
-Grapes,0.0036,0.0007
-"Groundnuts, with shell",0.034,0.006
-Gums Natural,0.15,NA
-"Hazelnuts, with shell",0.0053,0.0004
-Hemp Tow Waste,0.0031,0.0011
-Hempseed,0.035,NA
-Hops,0.019,0.0013
-Jojoba seed,#VALUE!,NA
-Jute,0.0027,0.0011
-Karite Nuts (Sheanuts),0.011,NA
-Kiwi fruit,0.0014,NA
-Kolanuts,0.014,NA
-"Leeks, other alliaceous veg",0.0031,0.0009
-Lemons and limes,0.0018,NA
-Lentils,0.036,0.0044
-Lettuce and chicory,0.0024,0.0004
-Linseed,0.029,NA
-Lupins,0.044,0.0051
-Maize,0.012,0.0034
-"Maize, green",0.0036,0.0008
-"Mangoes, mangosteens, guavas",0.003,0.0006
-Manila Fibre (Abaca),0.0029,0.0011
-Melonseed,0.029,NA
-Millet,0.02,0.0042
-Mushrooms and truffles,0.0093,NA
-Mustard seed,0.04,NA
-"Nutmeg, mace and cardamoms",0.013,0.0013
-"Nuts, nes",0.011,NA
-Oats,0.022,0.0036
-Oil palm fruit,0.0036,0.0007
-"Oilseeds, Nes",0.013,0.0046
-Okra,0.0028,0.0005
-Olives,0.0073,0.011
-"Onions, dry",0.0026,0.0007
-"Onions (inc. shallots), green",0.0026,0.0005
-Oranges,0.0031,0.0004
-Papayas,0.06,0.018
-Peaches and nectarines,0.0022,0.0004
-Pears,0.0018,0.0004
-"Peas, dry",0.038,0.0087
-"Peas, green",0.017,0.0033
-Pepper (Piper spp.),0.0098,0.0013
-Peppermint,0.011,0.0013
-Persimmons,0.001,NA
-Pigeon peas,NA,NA
-Pineapples,0.001,0.0002
-Pistachios,0.017,NA
-Plantains,0.0033,0.0003
-Plums and sloes,0.0024,NA
-Poppy seed,0.029,NA
-Potatoes,0.0025,0.001
-"Pulses, nes",0.026,0.0042
-"Pumpkins, squash and gourds",0.0027,0.0004
-"Pyrethrum,Dried",0.014,0.0013
-Quinces,0.0003,NA
-Quinoa,0.019,NA
-Ramie,0.004,0.0011
-Rapeseed,0.031,0.0059
-Raspberries,0.0014,NA
-"Rice, paddy",0.013,0.0028
-"Roots and Tubers, nes",0.0044,0.0003
-Rye,0.021,0.0036
-Safflower seed,0.03,0.0054
-Seed cotton,0.056,0.011
-Sesame seed,0.026,0.0051
-Sisal,0.005,0.0011
-Sorghum,0.015,0.0045
-Soybeans,0.059,0.0081
-"Spices, nes",0.013,0.001
-Spinach,0.004,0.0006
-Strawberries,0.0055,0.0017
-String beans,0.003,0.0007
-Sugar beet,0.0021,0.0005
-Sugar cane,0.0047,0.0003
-"Sugar crops, nes",0,NA
-Sunflower seed,0.024,0.0039
-Sweet potatoes,0.0034,0.0008
-Tallowtree Seeds,NA,NA
-"Tangerines, mandarins, clem.",0.0019,0.0004
-Taro (cocoyam),0.0037,0.0011
-Tea,0.019,0.0026
-"Tobacco, unmanufactured",0.042,0.0066
-Tomatoes,0.0014,0.0002
-Triticale,0.017,0.0029
-Tung nuts,0.048,NA
-Vanilla,0.0085,0.0013
-Vegetables fresh nes,0.0056,0.0009
-Vetches,0.034,0.004
-"Walnuts, with shell",0.022,0.0044
-Watermelons,0.0018,NA
-Wheat,0.021,0.0042
-Yams,0.0021,NA
-Yautia (cocoyam),0.0039,0.0011
+Item,FAO code,N,P,K
+"Almonds, with shell",221,39,11,71
+"Anise, badian, fennel, coriander",710,8.8,1.3,16
+Apples,515,2.2,0.7,4.5
+Apricots,526,3.7,0.7,2.2
+Areca nuts,226,7.8,NA,NA
+Artichokes,366,3.2,NA,NA
+Asparagus,367,4.8,0.9,4.2
+Avocados,572,2.7,0.9,NA
+Bambara beans,203,26,5.1,15
+Bananas,486,1.4,0.4,8.9
+Barley,44,18,3.2,5.8
+"Bastfibres, other",782,4.3,1.1,3.3
+"Beans, dry",176,42,5.7,20
+"Beans, green",414,4.1,0.7,2.2
+Berries nes,558,1.6,NA,NA
+Blueberries,552,1.1,0,0.8
+"Brazil nuts, with shell",216,11,NA,NA
+"Broad beans, horse beans, dry",181,30,5.1,15
+Buckwheat,89,17,2.2,3.7
+Cabbages and other brassicas,358,3.8,0.4,3
+Canary seed,101,20,2.9,11
+Carobs,461,2.6,NA,NA
+Carrots and turnips,426,2.1,0.5,2.3
+"Cashew nuts, with shell",217,12,NA,NA
+Cashewapple,591,1.3,NA,NA
+Cassava,125,2.7,3.3,2.6
+Castor oil seed,265,14,NA,NA
+Cauliflowers and broccoli,393,4,0.9,3.2
+Cereals nes,108,15,2.9,4.4
+Cherries,531,1.8,NA,NA
+"Cherries, sour",530,1.4,NA,NA
+Chestnut,220,2.9,NA,NA
+Chick peas,191,28,5.1,15
+Chicory roots,459,1.8,NA,NA
+"Chillies and peppers, dry",689,12,1.2,9.5
+"Chillies and peppers, green",401,2.2,0.5,2.2
+Cinnamon (cannella),693,12,1.3,16
+Cloves,698,19,4,18
+"Cocoa, beans",661,23,6,36
+Coconuts,249,19,3.8,6.6
+"Coffee, green",656,23,3.5,18
+"Cow peas, dry",195,30,5.1,15
+Cranberries,554,0.6,NA,NA
+Cucumbers and gherkins,397,1.5,0.5,1.6
+Currants,550,2.2,NA,NA
+Dates,577,2.4,NA,NA
+Eggplants (aubergines),399,2.8,0.8,2.9
+Fibre crops nes,821,4.3,1.1,3.3
+Figs,569,3,NA,NA
+Flax fibre and tow,773,14,3.5,6.4
+Fonio,94,13,2.2,4.2
+"Fruit, citrus nes",512,1.5,0.3,2.4
+"Fruit, fresh nes",619,1.9,0.4,2
+"Fruit, pome nes",542,3,0.7,2
+"Fruit, stone nes",541,2.2,0.7,2
+"Fruit, tropical fresh nes",603,2.8,0.7,2
+Garlic,406,6.4,0.9,2.7
+Ginger,720,16,1.3,16
+Gooseberries,549,1.4,NA,NA
+Grapefruit (inc. pomelos),507,1.8,NA,NA
+Grapes,560,3.6,0.7,5.4
+"Groundnuts, with shell",242,34,6,8.2
+"Gums, natural",839,150,NA,NA
+"Hazelnuts, with shell",225,5.3,0.4,1.7
+Hemp tow waste,777,3.1,1.1,3.3
+Hempseed,336,35,NA,NA
+Hops,677,19,1.3,16
+Jojoba seed,277,NA,NA,NA
+Jute,780,2.7,1.1,3.3
+Karite nuts (sheanuts),263,11,NA,NA
+Kiwi fruit,592,1.4,NA,NA
+Kola nuts,224,14,NA,NA
+"Leeks, other alliaceous vegetables",407,3.1,0.9,2.7
+Lemons and limes,497,1.8,NA,NA
+Lentils,201,36,4.4,16
+Lettuce and chicory,372,2.4,0.4,2.9
+Linseed,333,29,NA,NA
+Lupins,210,44,5.1,15
+Maize,56,12,3.4,4.3
+"Maize, green",446,3.6,0.8,2.8
+"Mangoes, mangosteens, guavas",571,3,0.6,3.8
+Manila fibre (abaca),809,2.9,1.1,3.3
+Melonseed,299,29,NA,NA
+Millet,79,20,4.2,5.4
+Mushrooms and truffles,449,9.3,NA,NA
+Mustard seed,292,40,NA,NA
+"Nutmeg, mace and cardamoms",702,13,1.3,16
+Nuts nes,234,11,NA,NA
+Oats,75,22,3.6,4.5
+Oil palm fruit,254,3.6,0.7,4.1
+Oilseeds nes,339,13,4.6,22
+Okra,430,2.8,0.5,3
+Olives,260,7.3,11,10
+"Onions, dry",403,2.6,0.7,2.2
+"Onions, shallots, green",402,2.6,0.5,1.8
+Oranges,490,3.1,0.4,4.6
+Papayas,600,60,18,140
+Peaches and nectarines,534,2.2,0.4,3.3
+Pears,521,1.8,0.4,2.6
+"Peas, dry",187,38,8.7,9.8
+"Peas, green",417,17,3.3,10
+Pepper (piper spp.),687,9.8,1.3,16
+Peppermint,748,11,1.3,16
+Persimmons,587,1,NA,NA
+Pigeon peas,197,NA,NA,NA
+Pineapples,574,1,0.2,1.4
+Pistachios,223,17,NA,NA
+Plantains and others,489,3.3,0.3,5
+Plums and sloes,536,2.4,NA,NA
+Poppy seed,296,29,NA,NA
+Potatoes,116,2.5,1,6.2
+Pulses nes,211,26,4.2,13
+"Pumpkins, squash and gourds",394,2.7,0.4,3.2
+"Pyrethrum, dried",754,14,1.3,16
+Quinces,523,0.3,NA,NA
+Quinoa,92,19,NA,NA
+Ramie,788,4,1.1,3.3
+Rapeseed,270,31,5.9,NA
+Raspberries,547,1.4,NA,NA
+"Rice, paddy",27,13,2.8,3
+Roots and tubers nes,149,4.4,0.3,2.9
+"Rubber, natural",836,7.2,1.3,4.4
+Rye,71,21,3.6,4.6
+Safflower seed,280,30,5.4,19
+Seed cotton,328,56,11,32
+Sesame seed,289,26,5.1,9.7
+Sisal,789,5,1.1,3.3
+Sorghum,83,15,4.5,4.2
+Soybeans,236,59,8.1,18
+Spices nes,723,13,1,8.8
+Spinach,373,4,0.6,3.7
+Strawberries,544,5.5,1.7,8.3
+String beans,423,3,0.7,2.2
+Sugar beet,157,2.1,0.5,2.3
+Sugar cane,156,4.7,0.3,1.3
+Sugar crops nes,161,0,NA,NA
+Sunflower seed,267,24,3.9,6.5
+Sweet potatoes,122,3.4,0.8,6.9
+Tallowtree seed,305,NA,NA,NA
+"Tangerines, satsumas, mandarins, clementines",495,1.9,0.4,1.3
+Taro (cocoyam),136,3.7,1.1,3.3
+Tea,667,19,2.6,15
+"Tobacco, unmanufactured",826,42,6.6,48
+Tomatoes,388,1.4,0.2,2.4
+Triticale,97,17,2.9,4.2
+Tung nuts,275,48,NA,NA
+Vanilla,692,8.5,1.3,16
+"Vegetables, fresh nes",463,5.6,0.9,2.6
+"Vegetables, leguminous nes",420,4.9,1.1,3.3
+Vetches,205,34,4,17
+"Walnuts, with shell",222,22,4.4,10
+Watermelons,567,1.8,NA,NA
+Wheat,15,21,4.2,5.2
+Yams,137,2.1,NA,NA
+Yautia (cocoyam),135,3.9,1.1,3.3

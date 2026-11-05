@@ -157,10 +157,13 @@ P_inputs_Mt_R_C_GLU_Y <- filter(NPK_inputs_Mt_R_GLU_Y, input == "P fertilizer") 
 K_inputs_Mt_R_C_GLU_Y <- filter(NPK_inputs_Mt_R_GLU_Y, input == "P fertilizer") %>%
   select(scenario, region, basin, year, GCAM_subsector, K_input_Mt = input_Mt)
 
-# Harvested nutrients: the % of N and P in mass of crops harvested by GCAM region, crop, basin
+# Harvested nutrients: the % of N, P, and K in mass of crops harvested by GCAM region, crop, basin
 crop_nutrient_contents_lower <- crop_nutrient_contents %>%
-  mutate(crop = tolower(item)) %>%
-  select(-item)
+  #map to lowercase crop for next step
+  left_join(crop_mapping, by = c("Item" = "item_name2024")) %>%
+  select("FAO code", "N", "P", "K", "crop") %>%
+  #the updated values in this file as of 11/5/2026 are kgN/tonne crop, so must be divided by 1000 to become kgN/kg crop
+  mutate(across(c(N, P, K), ~ .x / 1000))
 
 nutrient_contents_ctry <- L100.LDS_ag_prod_t %>%
   left_join(region_map, by = "iso") %>%
@@ -168,9 +171,10 @@ nutrient_contents_ctry <- L100.LDS_ag_prod_t %>%
   left_join(distinct(crop_mapping, crop, GTAP_crop, GCAM_commodity, GCAM_subsector),
             by = "GTAP_crop") %>%
   left_join(crop_nutrient_contents_lower, by = "crop") %>%
-  drop_na(contentN)
+  rename(contentN = N, contentP = P, contentK = K)
 
 N_contents_R_C_GLU <- nutrient_contents_ctry %>%
+  drop_na(contentN) %>%
   mutate(totalN = value * contentN) %>%
   group_by(region, GCAM_commodity, GCAM_subsector, basin) %>%
   summarise(prod_t = sum(value),
@@ -189,7 +193,7 @@ P_contents_R_C_GLU <- nutrient_contents_ctry %>%
 
 # K contents are just using P contents until data become available
 K_contents_R_C_GLU <- nutrient_contents_ctry %>%
-  drop_na(contentP) %>%
+  drop_na(contentK) %>%
   mutate(totalK = value * contentP) %>%
   group_by(region, GCAM_commodity, GCAM_subsector, basin) %>%
   summarise(prod_t = sum(value),
